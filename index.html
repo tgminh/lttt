@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Encoding and Decoding Algorithms</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css"> <!-- Link to the CSS stylesheet -->
 </head>
 <body>
     <header>
@@ -22,25 +22,14 @@
         </section>
 
         <section>
-            <h2>Input Text</h2>
+            <h2>Encoding/Decoding</h2>
             <textarea id="input-text" placeholder="Enter text to encode/decode"></textarea>
-        </section>
-
-        <section>
-            <h2>Output</h2>
-            <button onclick="processText()">Process</button>
-            <div id="results">
-                <p id="encoded-text"></p>
-                <p id="decoded-text"></p>
-                <p id="frequencies"></p>
-                <p id="codes"></p>
-                <p id="entropy"></p>
-                <p id="avg-code-length"></p>
-                <p id="compression-ratio"></p>
-            </div>
+            <button onclick="encodeText()">Encode</button>
+            <button onclick="decodeText()">Decode</button>
+            <p id="output-text"></p>
         </section>
     </main>
     
-    <script src="scripts.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
