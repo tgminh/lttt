@@ -154,58 +154,58 @@ class Fano {
     }
 }
 
-function processText() {
+function encodeText() {
     const input = document.getElementById('input-text').value;
     const algorithm = document.getElementById('algorithm-select').value;
     let encodedText = '';
-    let decodedText = '';
     let codes = {};
-    let frequencies = {};
-    let entropy = 0;
-    let avgCodeLength = 0;
-    let compressionRatio = 0;
-
-    if (!input) {
-        document.getElementById('results').innerText = "Please enter text to process.";
-        return;
-    }
-
-    const frequency = {};
-    for (const char of input) {
-        frequency[char] = (frequency[char] || 0) + 1;
-    }
-    frequencies = frequency;
 
     if (algorithm === 'shannon') {
         const shannon = new Shannon(input);
         encodedText = shannon.encode();
         codes = shannon.codes;
-        decodedText = shannon.decode(encodedText);
     } else if (algorithm === 'huffman') {
+        const frequency = {};
+        for (const char of input) {
+            frequency[char] = (frequency[char] || 0) + 1;
+        }
         const huffman = new Huffman(frequency);
         huffman.huffman();
         encodedText = input.split('').map(char => huffman.codes[char]).join('');
         codes = huffman.codes;
-        decodedText = huffman.decode(encodedText);
     } else if (algorithm === 'fano') {
+        const frequency = {};
+        for (const char of input) {
+            frequency[char] = (frequency[char] || 0) + 1;
+        }
         const fano = new Fano(frequency);
         fano.fano();
         encodedText = input.split('').map(char => fano.codes[char]).join('');
         codes = fano.codes;
-        decodedText = fano.decode(encodedText);
     }
 
-    const totalCount = input.length;
-    const probabilities = Object.fromEntries(Object.entries(frequencies).map(([char, count]) => [char, count / totalCount]));
-    entropy = -Object.values(probabilities).reduce((sum, prob) => sum + prob * Math.log2(prob), 0);
-    avgCodeLength = Object.entries(codes).reduce((sum, [char, code]) => sum + code.length * probabilities[char], 0);
-    compressionRatio = entropy / avgCodeLength;
+    document.getElementById('output-text').innerText = `Encoded Text: ${encodedText}\nCodes: ${JSON.stringify(codes)}`;
+}
 
-    document.getElementById('encoded-text').innerText = `Encoded Text: ${encodedText}`;
-    document.getElementById('decoded-text').innerText = `Decoded Text: ${decodedText}`;
-    document.getElementById('frequencies').innerText = `Frequencies: ${JSON.stringify(frequencies)}`;
-    document.getElementById('codes').innerText = `Codes: ${JSON.stringify(codes)}`;
-    document.getElementById('entropy').innerText = `Entropy: ${entropy.toFixed(4)}`;
-    document.getElementById('avg-code-length').innerText = `Average Code Length: ${avgCodeLength.toFixed(4)}`;
-    document.getElementById('compression-ratio').innerText = `Compression Ratio: ${compressionRatio.toFixed(4)}`;
+function decodeText() {
+    const input = document.getElementById('input-text').value.split("\n")[0]; // Assume encoded text is in the first line
+    const codes = JSON.parse(document.getElementById('input-text').value.split("\n")[1] || "{}"); // Assume codes are in the second line
+    const algorithm = document.getElementById('algorithm-select').value;
+    let decodedText = '';
+
+    if (algorithm === 'shannon') {
+        const shannon = new Shannon('');
+        shannon.codes = codes;
+        decodedText = shannon.decode(input);
+    } else if (algorithm === 'huffman') {
+        const huffman = new Huffman({});
+        huffman.codes = codes;
+        decodedText = huffman.decode(input);
+    } else if (algorithm === 'fano') {
+        const fano = new Fano({});
+        fano.codes = codes;
+        decodedText = fano.decode(input);
+    }
+
+    document.getElementById('output-text').innerText = `Decoded Text: ${decodedText}`;
 }
