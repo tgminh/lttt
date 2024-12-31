@@ -184,6 +184,7 @@ function encodeText() {
         codes = fano.codes;
     }
 
+    // Display encoded text immediately
     document.getElementById('output-text').innerText = `Encoded Text: ${encodedText}\nCodes: ${JSON.stringify(codes)}`;
 }
 
