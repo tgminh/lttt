@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encoding and Decoding Algorithms</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Encoding and Decoding Algorithms</h1>
+    </header>
+    
+    <main>
+        <section>
+            <h2>Shannon Encoding/Decoding</h2>
+            <textarea id="shannon-input" placeholder="Enter text for Shannon"></textarea>
+            <button onclick="encodeShannon()">Encode</button>
+            <button onclick="decodeShannon()">Decode</button>
+            <p id="shannon-output"></p>
+        </section>
+        
+        <section>
+            <h2>Huffman Encoding/Decoding</h2>
+            <textarea id="huffman-input" placeholder="Enter text for Huffman"></textarea>
+            <button onclick="encodeHuffman()">Encode</button>
+            <button onclick="decodeHuffman()">Decode</button>
+            <p id="huffman-output"></p>
+        </section>
+        
+        <section>
+            <h2>Fano Encoding/Decoding</h2>
+            <textarea id="fano-input" placeholder="Enter text for Fano"></textarea>
+            <button onclick="encodeFano()">Encode</button>
+            <button onclick="decodeFano()">Decode</button>
+            <p id="fano-output"></p>
+        </section>
+    </main>
+    
+    <script src="scripts.js"></script>
+</body>
+</html>
