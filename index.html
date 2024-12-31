@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Encoding and Decoding Algorithms</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css"> <!-- Link to the CSS stylesheet -->
 </head>
 <body>
     <header>
@@ -13,27 +13,20 @@
     
     <main>
         <section>
-            <h2>Shannon Encoding/Decoding</h2>
-            <textarea id="shannon-input" placeholder="Enter text for Shannon"></textarea>
-            <button onclick="encodeShannon()">Encode</button>
-            <button onclick="decodeShannon()">Decode</button>
-            <p id="shannon-output"></p>
+            <h2>Select Algorithm</h2>
+            <select id="algorithm-select">
+                <option value="shannon">Shannon</option>
+                <option value="huffman">Huffman</option>
+                <option value="fano">Fano</option>
+            </select>
         </section>
-        
+
         <section>
-            <h2>Huffman Encoding/Decoding</h2>
-            <textarea id="huffman-input" placeholder="Enter text for Huffman"></textarea>
-            <button onclick="encodeHuffman()">Encode</button>
-            <button onclick="decodeHuffman()">Decode</button>
-            <p id="huffman-output"></p>
-        </section>
-        
-        <section>
-            <h2>Fano Encoding/Decoding</h2>
-            <textarea id="fano-input" placeholder="Enter text for Fano"></textarea>
-            <button onclick="encodeFano()">Encode</button>
-            <button onclick="decodeFano()">Decode</button>
-            <p id="fano-output"></p>
+            <h2>Encoding/Decoding</h2>
+            <textarea id="input-text" placeholder="Enter text to encode/decode"></textarea>
+            <button onclick="encodeText()">Encode</button>
+            <button onclick="decodeText()">Decode</button>
+            <p id="output-text"></p>
         </section>
     </main>
     
