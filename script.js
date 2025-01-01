@@ -25,11 +25,13 @@ class Shannon {
 
         for (const [char, p] of prob) {
             const codeLength = Math.ceil(-Math.log2(p));
-            const cumulativeProbBin = cumulativeProb.toString(2).padStart(codeLength, '0').slice(0, codeLength);
-            codes[char] = cumulativeProbBin;
+            const cumulativeProbBin = cumulativeProb.toString(2);
+            if (cumulativeProbBin === "0") {
+              codes[char] = cumulativeProbBin;} 
+            else {
+              codes[char] = cumulativeProbBin.slice(2, 2+codeLength);}
             cumulativeProb += p;
         }
-
         return codes;
     }
 
@@ -61,31 +63,35 @@ class Huffman {
     }
 
     huffman() {
-        this.codes = {};
-        let heap = Object.entries(this.data).map(([char, freq]) => [freq, [char, ""]]);
+    this.codes = {};
+    // Initialize heap with frequency and [character, code] pairs
+    let heap = Object.entries(this.data).map(([char, freq]) => [freq, [[char, ""]]]);
+    heap.sort((a, b) => a[0] - b[0]);
+
+    while (heap.length > 1) {
+        let low1 = heap.shift(); // Smallest frequency
+        let low2 = heap.shift(); // Second smallest frequency
+
+        // Add prefix '0' to codes from low1
+        for (let pair of low1[1]) {
+            pair[1] = "0" + pair[1];
+        }
+        // Add prefix '1' to codes from low2
+        for (let pair of low2[1]) {
+            pair[1] = "1" + pair[1];
+        }
+
+        // Combine nodes and re-sort the heap
+        let combined = [low1[0] + low2[0], [...low1[1], ...low2[1]]];
+        heap.push(combined);
         heap.sort((a, b) => a[0] - b[0]);
-
-        while (heap.length > 1) {
-            let low1 = heap.shift();
-            let low2 = heap.shift();
-
-            for (let pair of low1[1]) {
-                pair[1] = "0" + pair[1];
-            }
-            for (let pair of low2[1]) {
-                pair[1] = "1" + pair[1];
-            }
-
-            let combined = [low1[0] + low2[0], ...low1[1], ...low2[1]];
-            heap.push(combined);
-            heap.sort((a, b) => a[0] - b[0]);
-        }
-
-        for (let [char, code] of heap[0].slice(1)) {
-            this.codes[char] = code;
-        }
     }
 
+    // Extract final codes from the remaining heap element
+    for (let [char, code] of heap[0][1]) {
+        this.codes[char] = code;
+    }
+}
     decode(encodedText) {
         const reverseCodes = Object.fromEntries(Object.entries(this.codes).map(([k, v]) => [v, k]));
         let decodedText = "";
@@ -154,7 +160,7 @@ class Fano {
     }
 }
 
-function encodeText() {
+window.encodeText = function() {
     const input = document.getElementById('input-text').value;
     const algorithm = document.getElementById('algorithm-select').value;
     let encodedText = '';
@@ -187,7 +193,7 @@ function encodeText() {
     document.getElementById('output-text').innerText = `Encoded Text: ${encodedText}\nCodes: ${JSON.stringify(codes)}`;
 }
 
-function decodeText() {
+window.decodeText = function () {
     const input = document.getElementById('input-text').value.split("\n")[0]; // Assume encoded text is in the first line
     const codes = JSON.parse(document.getElementById('input-text').value.split("\n")[1] || "{}"); // Assume codes are in the second line
     const algorithm = document.getElementById('algorithm-select').value;
