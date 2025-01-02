@@ -3,6 +3,8 @@ class Shannon {
     this.data = data;
     this.prob = this.calculateProbability(data);
     this.codes = this.shannonEncoding();
+    this.hesonen = this.hesonen();
+    this.hesonentoiuu = this.hesonen2();
   }
 
   calculateProbability(data) {
@@ -25,9 +27,10 @@ class Shannon {
 
     for (const [char, p] of prob) {
       const codeLength = Math.ceil(-Math.log2(p));
+      console.log(codeLength);
       const cumulativeProbBin = cumulativeProb.toString(2);
       if (cumulativeProbBin === '0') {
-        codes[char] = cumulativeProbBin.padStart(codeLength, "0");
+        codes[char] = cumulativeProbBin.padStart(codeLength, '0');
       } else {
         codes[char] = cumulativeProbBin.slice(2, 2 + codeLength);
       }
@@ -36,9 +39,39 @@ class Shannon {
     return codes;
   }
 
+  hesonen() {
+    const prob = Object.entries(this.prob).sort((a, b) => b[1] - a[1]);
+    let tong_entropy = 0;
+    let tong_do_dai = 0;
+    for (const [char, p] of prob) {
+      const entropy = p * -Math.log2(p);
+      const averageCodelength = p * Math.ceil(-Math.log2(p));
+      tong_entropy += entropy;
+      tong_do_dai += averageCodelength;
+    }
+    const hesonen = tong_entropy / tong_do_dai;
+    return hesonen;
+  }
+
+  hesonen2() {
+    const prob = Object.entries(this.prob).sort((a, b) => b[1] - a[1]);
+    let tong_do_dai = 0;
+    let count = 0;
+    for (const [char, p] of prob) {
+      const averageCodelength = p * Math.ceil(-Math.log2(p));
+      tong_do_dai += averageCodelength;
+      count += 1;
+    }
+    const hesonen = Math.log2(count) / tong_do_dai;
+    console.log(count);
+    return hesonen;
+  }
+
   encode() {
-    console.log(this.codes);
-    return this.data.split('').map(char => this.codes[char]).join('');
+    return this.data
+      .split('')
+      .map(char => this.codes[char])
+      .join('');
   }
 
   decode(encodedData) {
@@ -64,41 +97,49 @@ class Huffman {
   constructor(data) {
     this.codes = {};
     this.data = data;
+
+    // Nếu tổng giá trị = 1, coi đầu vào là xác suất
+    const total = Object.values(data).reduce((sum, value) => sum + value, 0);
+    if (total !== 1) {
+      console.warn(
+        'Input data does not represent probabilities. Assuming frequency input.'
+      );
+    }
   }
 
   huffman() {
     this.codes = {};
-    // Initialize heap with frequency and [character, code] pairs
+    // Khởi tạo heap với cặp [tần suất, [ký tự, mã]]
     let heap = Object.entries(this.data).map(([char, freq]) => [
       freq,
       [[char, '']],
     ]);
-    heap.sort((a, b) => a[0] - b[0]);
-
+    heap.sort((a, b) => a[0] - b[0]); // Sắp xếp heap theo tần suất tăng dần
     while (heap.length > 1) {
-      let low1 = heap.shift(); // Smallest frequency
-      let low2 = heap.shift(); // Second smallest frequency
+      let low1 = heap.shift(); // Tần suất nhỏ nhất
+      let low2 = heap.shift(); // Tần suất nhỏ thứ hai
 
-      // Add prefix '0' to codes from low1
+      // Gắn thêm '0' cho mã của low1
       for (let pair of low1[1]) {
         pair[1] = '0' + pair[1];
       }
-      // Add prefix '1' to codes from low2
+      // Gắn thêm '1' cho mã của low2
       for (let pair of low2[1]) {
         pair[1] = '1' + pair[1];
       }
 
-      // Combine nodes and re-sort the heap
+      // Kết hợp hai node và đưa lại vào heap
       let combined = [low1[0] + low2[0], [...low1[1], ...low2[1]]];
       heap.push(combined);
-      heap.sort((a, b) => a[0] - b[0]);
+      heap.sort((a, b) => a[0] - b[0]); // Sắp xếp lại heap
     }
 
-    // Extract final codes from the remaining heap element
+    // Trích xuất mã cuối cùng từ node gốc của cây
     for (let [char, code] of heap[0][1]) {
       this.codes[char] = code;
     }
   }
+
   decode(encodedText) {
     const reverseCodes = Object.fromEntries(
       Object.entries(this.codes).map(([k, v]) => [v, k])
@@ -158,6 +199,7 @@ class Fano {
 
     return splitIdx;
   }
+
   decode(encodedText) {
     const reverseCodes = Object.fromEntries(
       Object.entries(this.codes).map(([k, v]) => [v, k])
@@ -182,11 +224,21 @@ window.encodeText = function () {
   const algorithm = document.getElementById('algorithm-select').value;
   let encodedText = '';
   let codes = {};
+  let probString = '';
+  let kt = '';
+  let kn = '';
 
   if (algorithm === 'shannon') {
     const shannon = new Shannon(input);
     encodedText = shannon.encode();
     codes = shannon.codes;
+    const prob = shannon.prob;
+    probString = JSON.stringify(prob, null, 2);
+    console.log(probString);
+    const ktphu = shannon.hesonen;
+    kt = JSON.stringify(ktphu);
+    const knphu = shannon.hesonentoiuu;
+    kn = JSON.stringify(knphu);
   } else if (algorithm === 'huffman') {
     const frequency = {};
     for (const char of input) {
@@ -215,7 +267,9 @@ window.encodeText = function () {
 
   document.getElementById(
     'output-text'
-  ).innerText = `Encoded Text: ${encodedText}\nCodes: ${JSON.stringify(codes)}`;
+  ).innerText = `Encoded Text: ${encodedText}\nCodes: ${JSON.stringify(
+    codes
+  )}\nProbability: ${probString}\nHe_so_nen_thong_ke: ${kt}\nHe_so_nen_toi_uu: ${kn}`;
 };
 
 window.decodeText = function () {
@@ -243,4 +297,56 @@ window.decodeText = function () {
   document.getElementById(
     'output-text'
   ).innerText = `Decoded Text: ${decodedText}`;
+};
+
+window.encodeTextProb = function () {
+  const input = document.getElementById('dictInput').value;
+  const algorithm = document.getElementById('algorithm-select-2').value;
+  let encodedText = '';
+  let codes = {};
+  let probString = '';
+
+  if (algorithm === 'shannon') {
+    const shannon = new Shannon(input);
+    encodedText = shannon.shannonEncodingProb();
+    codes = shannon.codes;
+    const prob = shannon.prob;
+    probString = JSON.stringify(prob, null, 2);
+    console.log(probString);
+  }
+};
+window.encodeUsingProb_Huffman = function () {
+  const probInput = document.getElementById('prob-input').value; // Nhập JSON xác suất
+  let encodedResult = '';
+  let codes = {};
+
+  try {
+    const probDict = JSON.parse(probInput); // Parse input JSON
+    const total = Object.values(probDict).reduce(
+      (sum, value) => sum + value,
+      0
+    );
+
+    // Kiểm tra tổng xác suất có bằng 1 không
+    if (Math.abs(total - 1) > 1e-6) {
+      throw new Error(
+        'The probabilities do not sum to 1. Please provide valid probabilities.'
+      );
+    }
+
+    const huffman = new Huffman(probDict);
+    huffman.huffman(); // Tạo mã Huffman
+    encodedResult = Object.keys(probDict)
+      .map(key => `${key}: ${huffman.codes[key]}`)
+      .join('\n'); // Tạo chuỗi mã hóa từng ký tự
+    codes = huffman.codes; // Lưu mã Huffman
+  } catch (error) {
+    document.getElementById('prob-output').innerText =
+      'Error: Invalid JSON format or probabilities. ' + error.message;
+    return;
+  }
+
+  document.getElementById(
+    'prob-output'
+  ).innerText = `Encoded Keys:\n${encodedResult}`;
 };
