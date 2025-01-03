@@ -1,35 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Encoding and Decoding Algorithms</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link to the CSS stylesheet -->
-</head>
-<body>
+    <link rel="stylesheet" href="src/styles.css" />
+    <!-- Link to the CSS stylesheet -->
+  </head>
+  <body>
     <header>
-        <h1>Encoding and Decoding Algorithms</h1>
+      <h1>Encoding and Decoding Algorithms</h1>
     </header>
-    
-    <main>
-        <section>
-            <h2>Select Algorithm</h2>
-            <select id="algorithm-select">
-                <option value="shannon">Shannon</option>
-                <option value="huffman">Huffman</option>
-                <option value="fano">Fano</option>
-            </select>
-        </section>
 
-        <section>
-            <h2>Encoding/Decoding</h2>
-            <textarea id="input-text" placeholder="Enter text to encode/decode"></textarea>
-            <button onclick="encodeText()">Encode</button>
-            <button onclick="decodeText()">Decode</button>
-            <p id="output-text"></p>
-        </section>
+    <main>
+      <section>
+        <h2>Select Algorithm</h2>
+        <select id="algorithm-select">
+          <option value="shannon">Shannon</option>
+          <option value="huffman">Huffman</option>
+          <option value="fano">Fano</option>
+        </select>
+      </section>
+
+      <section>
+        <h2>Encoding/Decoding</h2>
+        <h5>Note: Probabilities and compression ratios are displayed only when Shannon mode is chosen. </h5>
+
+        <textarea
+          id="input-text"
+          placeholder="Enter text to encode/decode."
+        ></textarea>
+        <button onclick="encodeText()">Encode</button>
+        <button onclick="decodeText()">Decode</button>
+
+        <p id="output-text"></p>
+      </section>
+
+      <section>
+        <h2>Probability Input</h2>
+        <h5>Note: Only Huffman algorithm is available </h5>
+        <h4>Encoding/Decoding</h4>
+        <textarea id="prob-input"
+          placeholder='Enter dictionary. (e.g., {"key1":value1, "key2":value2})''></textarea>
+        <button onclick="encodeUsingProb_Huffman()">Encode Using Probabilities</button>
+
+        <p id="output-text-probability"></p>
+        <div id="prob-output"></div>
+      </section>
     </main>
-    
-    <script src="script.js"></script>
-</body>
+
+    <script src="src/script.js"></script>
+  </body>
 </html>
