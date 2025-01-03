@@ -1,4 +1,4 @@
-# lttt
+#Bài tập lớn Lý thuyết thông tin
 
 Kết quả bài tập lớn là url:
     https://tgminh.github.io/lttt/
